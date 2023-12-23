@@ -69,6 +69,8 @@ class TvApp {
         const { showId } = event.target.dataset
 
         document.body.style.overflowY = 'hidden'
+
+        document.addEventListener('keydown', this.closeDetailsView)
         
         getShowById(showId).then(show => {
             const showCard = this.createShowCard(show, true)
@@ -78,14 +80,17 @@ class TvApp {
     }
 
     closeDetailsView = event => {
-        const { showId } = event.target.dataset
-        const closeBtn = document.querySelector(`[id='showPreview'] [data-show-id='${showId}']`)
-        closeBtn.removeEventListener('click', this.closeDetailsView)
+        if(event.type === "click" || event.key === "Escape") {
+            const { showId } = event.target.dataset
+            const closeBtn = document.querySelector(`[id='showPreview'] [data-show-id='${showId}']`)
+            
+            closeBtn.removeEventListener('click', this.closeDetailsView)
+            document.removeEventListener('keydown', this.closeDetailsView)
 
-        document.body.style.overflowY = 'auto';
-
-        this.viewElems.showPreview.innerText = ""
-        this.viewElems.showPreview.style.display = "none"
+            document.body.style.overflowY = 'auto'
+            this.viewElems.showPreview.innerText = ""
+            this.viewElems.showPreview.style.display = "none"
+        }
     }
 
     createShowCard = (show, isDetailed) => {
