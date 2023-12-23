@@ -40,36 +40,92 @@ class TvApp {
     }
 
     fetchAndDisplayShows = () => {
-        getShowsByKey(this.selectedName).then(shows => this.renderCards(shows))
+        getShowsByKey(this.selectedName).then(shows => this.renderCardsOnList(shows))
     }
 
-    renderCards = shows => {
+    renderCardsOnList = shows => {
+        Array.from(
+            document.querySelectorAll("[data-show-id]")
+        ).forEach(btn => btn.removeEventListener('click', this.openDetailsView))
+
         this.viewElems.showsWrapper.innerText = ""
 
         for (const { show } of shows) {
-            this.createShowCard(show)
+            const showCard = this.createShowCard(show, false)
+            this.viewElems.showsWrapper.appendChild(showCard)
         }
     }
 
-    createShowCard = show => {
+    openDetailsView = event => {
+        const { showId } = event.target.dataset
+        
+        getShowById(showId).then(show => {
+            const showCard = this.createShowCard(show, true)
+            this.viewElems.showPreview.appendChild(showCard)
+            this.viewElems.showPreview.style.display = "block"
+        })
+    }
+
+    closeDetailsView = event => {
+        const { showId } = event.target.dataset
+        const closeBtn = document.querySelector(`[id='showPreview'] [data-show-id='${showId}']`)
+        closeBtn.removeEventListener('click', this.closeDetailsView)
+
+        this.viewElems.showPreview.innerText = ""
+        this.viewElems.showPreview.style.display = "none"
+    }
+
+    createShowCard = (show, isDetailed) => {
         const divCard = createDOMElement("div", "card")
-        let img, p
+        let img, p, btn
         const divCardBody = createDOMElement("div", "card-body")
         const h5 = createDOMElement("h5", "card-title", show["name"])
-        const btn = createDOMElement("button", "btn btn-primary", "Show details")
 
-        if (show["image"]) {
-            img = createDOMElement("img", "card-img-top", undefined, show["image"]["medium"])
+        if (isDetailed) {
+            btn = createDOMElement("button", "btn btn-primary", "Close details")
         }
         else {
-            img = createDOMElement("img", "card-img-top", undefined, "https://via.placeholder.com/210x295")
+            btn = createDOMElement("button", "btn btn-primary", "Show details")
+        }
+
+        if (show["image"]) {
+            if(isDetailed) {
+                img = createDOMElement("div", "card-preview-bg")
+                img.style.backgroundImage = `url('${show["image"]["original"]}')`
+            }
+            else {
+                img = createDOMElement("img", "card-img-top", undefined, show["image"]["medium"])
+            }
+        }
+        else {
+            if(isDetailed) {
+                img = createDOMElement("div", "card-preview-bg")
+                img.style.backgroundImage = `url('https://via.placeholder.com/210x295')`
+            }
+            else {
+                img = createDOMElement("img", "card-img-top", undefined, "https://via.placeholder.com/210x295")
+            }
         }
 
         if (show["summary"]) {
-            p = createDOMElement("p", "card-text", `${removeHTMLTags(show["summary"]).slice(0, 80).trim()}...`)
+            if(isDetailed) {
+                p = createDOMElement("p", "card-text", removeHTMLTags(show["summary"]).trim())
+            }
+            else {
+                p = createDOMElement("p", "card-text", `${removeHTMLTags(show["summary"]).slice(0, 80).trim()}...`)
+            }
         }
         else {
             p = createDOMElement("p", "card-text", "There is no summary for thar show yet.")
+        }
+
+        btn.dataset.showId = show.id
+
+        if (isDetailed) {
+            btn.addEventListener("click", this.closeDetailsView)
+        }
+        else {
+            btn.addEventListener("click", this.openDetailsView)
         }
 
         divCard.appendChild(img)
@@ -78,7 +134,7 @@ class TvApp {
         divCardBody.appendChild(p)
         divCardBody.appendChild(btn)
         
-        this.viewElems.showsWrapper.appendChild(divCard)
+        return divCard
     }
 }
 
