@@ -23,10 +23,8 @@
     width: 90%;
     max-width: 1100px;
     height: 90%;
-    background: white;
     transform: translate(-50%, 0);
-    z-index: 1;
-    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+    z-index: 100;
 }
 
 .show-preview .card {
@@ -38,4 +36,15 @@
     height: 45%;
     background-position: center;
     background-size: cover;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-body button {
+    margin-top: 10px;
 }

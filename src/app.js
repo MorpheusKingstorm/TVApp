@@ -32,10 +32,19 @@ class TvApp {
         Object.keys(this.showNameButtons).forEach(showName => {
             this.showNameButtons[showName].addEventListener('click', this.setCurrentNameFilter)
         })
+
+        this.viewElems.searchButton.addEventListener('click', this.setCurrentNameFilter)
+        document.addEventListener('keydown', this.setCurrentNameFilter)
     }
 
     setCurrentNameFilter = event => {
-        this.selectedName = event.target.dataset.showName
+        if (event.target.dataset.showName) {
+            this.selectedName = event.target.dataset.showName
+        }
+        else if (this.viewElems.searchInput.value && (event.key === "Enter" || event.type === "click")) {
+            this.selectedName = this.viewElems.searchInput.value
+        }
+        
         this.fetchAndDisplayShows()
     }
 
@@ -58,6 +67,8 @@ class TvApp {
 
     openDetailsView = event => {
         const { showId } = event.target.dataset
+
+        document.body.style.overflowY = 'hidden'
         
         getShowById(showId).then(show => {
             const showCard = this.createShowCard(show, true)
@@ -71,6 +82,8 @@ class TvApp {
         const closeBtn = document.querySelector(`[id='showPreview'] [data-show-id='${showId}']`)
         closeBtn.removeEventListener('click', this.closeDetailsView)
 
+        document.body.style.overflowY = 'auto';
+
         this.viewElems.showPreview.innerText = ""
         this.viewElems.showPreview.style.display = "none"
     }
@@ -79,10 +92,11 @@ class TvApp {
         const divCard = createDOMElement("div", "card")
         let img, p, btn
         const divCardBody = createDOMElement("div", "card-body")
+        const divTextBody = createDOMElement("div", "card-text-body")
         const h5 = createDOMElement("h5", "card-title", show["name"])
 
         if (isDetailed) {
-            btn = createDOMElement("button", "btn btn-primary", "Close details")
+            btn = createDOMElement("button", "btn btn-danger", "Close details")
         }
         else {
             btn = createDOMElement("button", "btn btn-primary", "Show details")
@@ -130,8 +144,9 @@ class TvApp {
 
         divCard.appendChild(img)
         divCard.appendChild(divCardBody)
-        divCardBody.appendChild(h5)
-        divCardBody.appendChild(p)
+        divCardBody.appendChild(divTextBody)
+        divTextBody.appendChild(h5)
+        divTextBody.appendChild(p)
         divCardBody.appendChild(btn)
         
         return divCard
