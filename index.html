@@ -9,16 +9,20 @@
 </head>
 <body>
     <div class="container">
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="input-group mb-3">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Most popular keywords
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <button class="dropdown-item" data-show-name="harry">harry</button>
                 <button class="dropdown-item" data-show-name="dog">dog</button>
                 <button class="dropdown-item" data-show-name="queen">queen</button>
+                <hr class="dropdown-divider">
                 <button class="dropdown-item" data-show-name="fun">fun</button>
             </div>
+            
+            <input type="text" class="form-control" id="searchInput" placeholder="Type a keyword" aria-label="Text input with dropdown button">
+            <button type="button" class="btn btn-outline-secondary" id="searchButton">Search</button>
         </div>
 
         <div class="show-preview" id="showPreview"></div>

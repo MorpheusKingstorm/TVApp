@@ -11,3 +11,17 @@ export const mapListToDOMElements = (listOfValues, attribute) => {
 
     return _viewElems
 }
+
+export const createDOMElement = (tagName, className, innerText, src) => {
+    const tag = document.createElement(tagName)
+    tag.classList = className
+
+    if (innerText) tag.innerText = innerText
+    if (src) tag.src = src
+
+    return tag
+}
+
+export const removeHTMLTags = htmlText => {
+    return htmlText.replace(/<[^>]*>/g, '')
+}
