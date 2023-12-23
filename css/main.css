@@ -11,10 +11,6 @@
 .shows-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    gap: 20px 5px;
-    margin: 20px 0;
-}
-
-.card:not(:nth-of-type(5n)) {
-    margin-right: 20px;
+    gap: 15px;
+    margin: 30px 0;
 }

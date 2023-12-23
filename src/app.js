@@ -44,6 +44,8 @@ class TvApp {
     }
 
     renderCards = shows => {
+        this.viewElems.showsWrapper.innerText = ""
+
         for (const { show } of shows) {
             this.createShowCard(show)
         }
@@ -51,23 +53,29 @@ class TvApp {
 
     createShowCard = show => {
         const divCard = createDOMElement("div", "card")
-        if (show["image"] && show["image"]["medium"]) {
-            const img = createDOMElement("img", "card-img-top", undefined, show["image"]["medium"])
-            divCard.appendChild(img)
-        }
-
+        let img, p
         const divCardBody = createDOMElement("div", "card-body")
-        divCard.appendChild(divCardBody)
-
         const h5 = createDOMElement("h5", "card-title", show["name"])
-        divCardBody.appendChild(h5)
+        const btn = createDOMElement("button", "btn btn-primary", "Show details")
+
+        if (show["image"]) {
+            img = createDOMElement("img", "card-img-top", undefined, show["image"]["medium"])
+        }
+        else {
+            img = createDOMElement("img", "card-img-top", undefined, "https://via.placeholder.com/210x295")
+        }
 
         if (show["summary"]) {
-            const p = createDOMElement("p", "card-text", removeHTMLTags(show["summary"]))
-            divCardBody.appendChild(p)
+            p = createDOMElement("p", "card-text", `${removeHTMLTags(show["summary"]).slice(0, 80).trim()}...`)
+        }
+        else {
+            p = createDOMElement("p", "card-text", "There is no summary for thar show yet.")
         }
 
-        const btn = createDOMElement("button", "btn btn-primary", "Show details")
+        divCard.appendChild(img)
+        divCard.appendChild(divCardBody)
+        divCardBody.appendChild(h5)
+        divCardBody.appendChild(p)
         divCardBody.appendChild(btn)
         
         this.viewElems.showsWrapper.appendChild(divCard)
