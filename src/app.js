@@ -1,5 +1,5 @@
 import { getShowsByKey, getShowById } from "./requests.js"
-import { mapListToDOMElements } from "./DOMInteractions.js"
+import { mapListToDOMElements, createDOMElement, removeHTMLTags } from "./DOMInteractions.js"
 
 class TvApp {
     constructor() {
@@ -12,6 +12,7 @@ class TvApp {
     initializeApp = () => {
         this.connectHTMLElements()
         this.setupListeners()
+        this.fetchAndDisplayShows()
     }
 
     connectHTMLElements = () => {
@@ -35,6 +36,41 @@ class TvApp {
 
     setCurrentNameFilter = event => {
         this.selectedName = event.target.dataset.showName
+        this.fetchAndDisplayShows()
+    }
+
+    fetchAndDisplayShows = () => {
+        getShowsByKey(this.selectedName).then(shows => this.renderCards(shows))
+    }
+
+    renderCards = shows => {
+        for (const { show } of shows) {
+            this.createShowCard(show)
+        }
+    }
+
+    createShowCard = show => {
+        const divCard = createDOMElement("div", "card")
+        if (show["image"] && show["image"]["medium"]) {
+            const img = createDOMElement("img", "card-img-top", undefined, show["image"]["medium"])
+            divCard.appendChild(img)
+        }
+
+        const divCardBody = createDOMElement("div", "card-body")
+        divCard.appendChild(divCardBody)
+
+        const h5 = createDOMElement("h5", "card-title", show["name"])
+        divCardBody.appendChild(h5)
+
+        if (show["summary"]) {
+            const p = createDOMElement("p", "card-text", removeHTMLTags(show["summary"]))
+            divCardBody.appendChild(p)
+        }
+
+        const btn = createDOMElement("button", "btn btn-primary", "Show details")
+        divCardBody.appendChild(btn)
+        
+        this.viewElems.showsWrapper.appendChild(divCard)
     }
 }
 
